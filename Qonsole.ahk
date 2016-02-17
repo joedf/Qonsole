@@ -49,8 +49,8 @@
 	IniRead,dx,%configfile%,Animation,dx,25 ;dx:=25
 		quitOnInActive:=0
 	IniRead,HideOnInActive,%configfile%,Settings,HideOnInActive,0 ;HideOnInActive:=0
-  IniRead,HorizontallyCentered,%configfile%,Settings,HorizontallyCentered,0 ;HorizontallyCentered:=0
-  IniRead,BottomPlaced,%configfile%,Settings,BottomPlaced,0 ;BottomPlaced:=0
+	IniRead,HorizontallyCentered,%configfile%,Settings,HorizontallyCentered,0 ;HorizontallyCentered:=0
+	IniRead,BottomPlaced,%configfile%,Settings,BottomPlaced,0 ;BottomPlaced:=0
 	;IniRead,ShowDebugMenu,%configfile%,Settings,ShowDebugMenu,0 ;ShowDebugMenu:=0
 	IniRead,AnimationDisabled,%configfile%,Animation,AnimationDisabled,0 ;AnimationDisabled:=0
 	IniRead,CmdPaste,%configfile%,Settings,CmdPaste,1 ;CmdPaste:=1
@@ -82,8 +82,8 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.3.4"
-App_date:="2016/02/15"
+Version:="1.4.0"
+App_date:="2016/02/17"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
@@ -307,7 +307,7 @@ showC:
 				WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
 				;Winset, AlwaysOnTop, On, %con%
 			cmd_w_fix:=cw_w
-      cmd_h_fix:=ch
+			CMD_Height-=10
 		} else if (InStr(Console_Mode,"mintty")) {
 			con=ahk_class mintty
 			if (!FileExist(mintty_path))
@@ -351,8 +351,8 @@ showC:
 			WinGet,hc,ID,%con%
 			con=ahk_id %hc%
 			cmd_w_fix:=cw_w
-      cmd_h_fix:=ch
 			WinMove,%con%,,,,, % (ch-=14)
+			CMD_Height-=14
 			
 		} else { ;Cmd mode (Quake mode?? >> Quahke)
 			con=ahk_class ConsoleWindowClass
@@ -443,34 +443,37 @@ showC:
 		WinActivate,ahk_id %hGuiBGDarken%
 		WinSet,AlwaysOnTop,On,%con%
 		WinActivate,%con%
-		bottom_fit := - 40 ;+5 to fit the taskbar. Height alone won't do it. -30 to be at the bottom of the screen
-
+		
+		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
+		_ty:=((BottomPlaced) ? ((CMD_Height<A_ScreenHeight) ? abs(A_ScreenHeight-CMD_Height) : 0) : ((Console_2_Mode) ? 0 : -2))
+		WinMove,%con%,,_tx, _ty
+		
 		;///////////////////////// [ XP Patch ] /////////////////////////
 		if (XPMode) {
 			cmd_w_fix:=__www
 			offset:=offset-(__wwzh) ;;?? this line does nothing???
 			
-      WinGetPos,,,, Height, %con%
-      Height := Height + bottom_fit ; +5 to fit the taskbar. Height alone won't do it. -30 to be at the bottom of the screen
-      WinMove,%con%,,((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0)+((Console_2_Mode) ? 0 : -2),((BottomPlaced) ? ((Height<A_ScreenHeight) ? abs(A_ScreenHeight-Height) : 0) : 0)
-
-			
 			;winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
-			
+
 			__wwwwvar:=(Console_2_Mode) ? 0 : -2
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
-      (BottomPlaced) ? WinSlideHideExp(Con,Delay,speed,A_ScreenHeight-Height,dx) : WinSlideShowExp(Con,Delay,speed, __wwwwvar,dx) ;WinSlideShow(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )		}
+			if (BottomPlaced)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+			else
+				WinSlideDownExp(Con,Delay,speed, __wwwwvar,dx)
+			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )		}
 		}
-    else
+		else
 		{
 			if (InStr(Console_Mode,"Mintty"))
 				WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
-      WinGetPos,,,, Height, %con%
-      Height := Height + bottom_fit ; +5 to fit the taskbar. Height alone won't do it. -30 to be at the bottom of the screen
-      WinMove,%con%,,((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0)+((Console_2_Mode) ? 0 : -2),((BottomPlaced) ? ((Height<A_ScreenHeight) ? abs(A_ScreenHeight-Height) : 0) : 0)
+			
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
-      (BottomPlaced) ? WinSlideHideExp(Con,Delay,speed,A_ScreenHeight-Height,dx) : WinSlideShowExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx) ;WinSlideShow(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
-
+			if (BottomPlaced)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+			else
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
+			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
 		
@@ -486,17 +489,20 @@ showC:
 		WinActivate,ahk_id %hGuiBGDarken%
 		WinSet,AlwaysOnTop,On,%con%
 		WinActivate,%con%
-    WinGetPos,,,, Height, %con%
-    Height := Height + bottom_fit ; +5 to fit the taskbar. Height alone won't do it. -30 to be at the bottom of the screen
-    WinMove,%con%,,((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0)+((Console_2_Mode) ? 0 : -2),((BottomPlaced) ? ((Height<A_ScreenHeight) ? abs(A_ScreenHeight-Height) : 0) : 0)
-
+		
+		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
+		_ty:=((BottomPlaced) ? ((CMD_Height<A_ScreenHeight) ? abs(A_ScreenHeight-CMD_Height) : 0) : ((Console_2_Mode) ? 0 : -2))
+		WinMove,%con%,,_tx, ;_ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
 		if (XPMode) {
 			__wwwwvar:=(Console_2_Mode) ? 0 : -2
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			;winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
-      (BottomPlaced) ? WinSlideHideExp(Con,Delay,speed,A_ScreenHeight-Height,dx) : WinSlideShowExp(Con,Delay,speed, __wwwwvar,dx)
+			if (BottomPlaced)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+			else
+				WinSlideDownExp(Con,Delay,speed, __wwwwvar,dx)
 		}
 		else
 		{
@@ -506,9 +512,12 @@ showC:
 			}
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			;gosub FadeBG
-      ;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
-      (BottomPlaced) ? WinSlideHideExp(Con,Delay,speed,A_ScreenHeight-Height,dx) : WinSlideShowExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
-
+			
+			;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
+			if (BottomPlaced)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+			else
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
 	}
@@ -538,9 +547,12 @@ HideC:
 		}
 		*/
 		
-    ;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
-    (BottomPlaced) ? WinSlideShowExp(Con,Delay,speed,A_ScreenHeight ,dx) : WinSlideHideExp(Con,Delay,speed,offset,dx)
-    ;WinSlideHide(Con,speed,Delay,offset)
+		;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
+		if (BottomPlaced)
+			WinSlideDownExp(Con,Delay,speed,A_ScreenHeight,dx)
+		else
+			WinSlideUpExp(Con,Delay,speed,offset,dx)
+		;WinSlideUp(Con,speed,Delay,offset)
 		WinHide,%con%
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -755,14 +767,14 @@ prog_settings:
 		Gui, Add, Edit, x+4 yp-3 w55 hp ;, 20
 		Gui, Add, UpDown, vUCMD_Height Range24-%UCMD_Height_max%, %CMD_Height%
 		
-    if(HorizontallyCentered)
-      Gui, Add, CheckBox, x+12 yp hp checked vHorizontallyCentered, Centered 
+		if(HorizontallyCentered)
+			Gui, Add, CheckBox, x+12 yp hp checked vHorizontallyCentered, Centered 
 		else
-      Gui, Add, CheckBox, x+12 yp hp vHorizontallyCentered, Centered
-    if(BottomPlaced)
-      Gui, Add, CheckBox, x+12 yp hp checked vBottomPlaced, Bottom 
-    else
-      Gui, Add, CheckBox, x+12 yp hp vBottomPlaced, Bottom 
+			Gui, Add, CheckBox, x+12 yp hp vHorizontallyCentered, Centered
+		if(BottomPlaced)
+			Gui, Add, CheckBox, x+12 yp hp checked vBottomPlaced, Bottom 
+		else
+			Gui, Add, CheckBox, x+12 yp hp vBottomPlaced, Bottom 
 
 		Gui, Add, Text, x16 yp+26, Start Up Arguments
 		Gui, Add, Edit, x+4 yp-2 h20 w214 vCMD_StartUpArgs hwndhEditCMD_StartUpArgs,%CMD_StartUpArgs%
@@ -881,8 +893,8 @@ GuiSave:
 	IniWrite,%Udelay%,%configFile%,Animation,Delay
 	IniWrite,%Udx%,%configFile%,Animation,dx
 	IniWrite,%HideOnInActive%,%configFile%,Settings,HideOnInActive
-  IniWrite,%HorizontallyCentered%,%configFile%,Settings,HorizontallyCentered
-  IniWrite,%BottomPlaced%,%configfile%,Settings,BottomPlaced
+	IniWrite,%HorizontallyCentered%,%configFile%,Settings,HorizontallyCentered
+	IniWrite,%BottomPlaced%,%configfile%,Settings,BottomPlaced
 	;IniWrite,%ShowDebugMenu%,%configFile%,Settings,ShowDebugMenu
 	IniWrite,%AnimationDisabled%,%configFile%,Animation,AnimationDisabled
 	IniWrite,%CmdPaste%,%configFile%,Settings,CmdPaste
@@ -1206,7 +1218,7 @@ WindowDesign(WindowHWND) {
 }
 
 ;Modern-like Exponential Movement - inspired from Quahke
-WinSlideShowExp(Wintitle,Delay,spd,fy,dx) {
+WinSlideDownExp(Wintitle,Delay,spd,fy,dx) {
 	global anim
 	
 	global AnimationDisabled
@@ -1241,7 +1253,7 @@ WinSlideShowExp(Wintitle,Delay,spd,fy,dx) {
 	return
 }
 
-WinSlideHideExp(Wintitle,Delay,spd,fy,dx) {
+WinSlideUpExp(Wintitle,Delay,spd,fy,dx) {
 	global anim
 	
 	global AnimationDisabled
@@ -1262,12 +1274,14 @@ WinSlideHideExp(Wintitle,Delay,spd,fy,dx) {
 			return
 		WinGetPos,,y,,,%wintitle%
 		b:=y-(spd*(-(1-exp((abs(dx)-A_Index)/tau))+1))-1
+		if (b<=fy) {
+			WinMove,%Wintitle%,,,%fy%
+			break
+		}
 		if (b <= y) ;(b > fy)
 			WinMove,%Wintitle%,,,%b%
 		if Delay
 			Sleep %delay%
-		if (b<=fy)
-			break
 	}
 	;WinMove,%Wintitle%,,,%fy%
 	anim:=0	
