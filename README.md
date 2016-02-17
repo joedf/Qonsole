@@ -5,6 +5,13 @@ Released under the [MIT License](LICENSE.md).
 
 [![Download for Microsoft Windows](logo/download_x86.png)](https://github.com/joedf/Qonsole/releases/latest)  
 
+###Screenshots
+_Default view_
+![screenshot1](screens/s1.png)
+  
+_Settings panel_
+![screenshot2](screens/s2.png)
+
 ###User Reviews
 *_triarif_*  
 ★★★★★ (5/5)  
