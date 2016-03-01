@@ -1,4 +1,4 @@
-﻿; Tested On AutoHotkey Version: 1.1.13.01
+﻿; Supported On AutoHotkey Version: 1.1.13.01+
 	
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	if A_OSVersion in WIN_2003,WIN_XP,WIN_2000,WIN_NT4,WIN_95,WIN_98,WIN_ME  ; Note: No spaces around commas.
@@ -82,8 +82,8 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.0"
-App_date:="2016/02/17"
+Version:="1.4.1"
+App_date:="2016/03/01"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
@@ -250,6 +250,7 @@ showC:
 		open:=0
 		cShown:=0
 		cPID:=0
+		xC_height:=CMD_Height
 	}
 	if (cShown)
 		goto HideC
@@ -297,9 +298,9 @@ showC:
 			;Sleep 500
 				;doesnt work ;WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
 				Winset, AlwaysOnTop, On, %con%
-			cmd_height__:=(-cmd_height)
-			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%cmd_width%,%cmd_height%
-			WinMove,%con%,,,%cmd_height__%,%cmd_width%,%cmd_height%
+			cmd_height__:=(-xC_height)
+			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%xC_height%,%cmd_height%
+			WinMove,%con%,,,%cmd_height__%,%xC_height%,%cmd_height%
 			WinGetPos,,,cw_w,ch,%con%
 			WinGet,hc,ID,%con%
 			con=ahk_id %hc%
@@ -307,7 +308,7 @@ showC:
 				WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
 				;Winset, AlwaysOnTop, On, %con%
 			cmd_w_fix:=cw_w
-			CMD_Height-=10
+			xC_height-=10
 		} else if (InStr(Console_Mode,"mintty")) {
 			con=ahk_class mintty
 			if (!FileExist(mintty_path))
@@ -335,7 +336,7 @@ showC:
 			WinWaitActive,%con%
 			DetectHiddenWindows,On
 				Winset, AlwaysOnTop, On, %con%
-			cmd_height__:=(-cmd_height)
+			cmd_height__:=(-xC_height)
 			
 			; hide window border
 			WinSet, Style, -0x40000, %con%
@@ -345,14 +346,14 @@ showC:
 			WinSet, Style, -0x800000, %con%
 			WinSet, Style, -0x400000, %con%
 			
-			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%cmd_width%,% cmd_height+0
-			WinMove,%con%,,,%cmd_height__%,%cmd_width%, % cmd_height+0
+			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%cmd_width%,% xC_height+0
+			WinMove,%con%,,,%cmd_height__%,%cmd_width%, % xC_height+0
 			WinGetPos,,,cw_w,ch,%con%
 			WinGet,hc,ID,%con%
 			con=ahk_id %hc%
 			cmd_w_fix:=cw_w
 			WinMove,%con%,,,,, % (ch-=14)
-			CMD_Height-=14
+			xC_height-=14
 			
 		} else { ;Cmd mode (Quake mode?? >> Quahke)
 			con=ahk_class ConsoleWindowClass
@@ -419,7 +420,7 @@ showC:
 			cmd_w_fix:=(cmd_w_int*cmd_int_fwidth)
 			winW:=CMD_Width+50
 			SysGet,tbarH__,4
-			WinMove,%con%,,,,%winW%,(CMD_Height+tbarH__)
+			WinMove,%con%,,,,%winW%,(xC_height+tbarH__)
 			WindowDesign(hc)
 			
 			
@@ -445,7 +446,7 @@ showC:
 		WinActivate,%con%
 		
 		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
-		_ty:=((BottomPlaced) ? ((CMD_Height<A_ScreenHeight) ? abs(A_ScreenHeight-CMD_Height) : 0) : ((Console_2_Mode) ? 0 : -2))
+		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height) : 0) : ((Console_2_Mode) ? 0 : -2))
 		WinMove,%con%,,_tx, _ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -458,7 +459,7 @@ showC:
 			__wwwwvar:=(Console_2_Mode) ? 0 : -2
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
 			else
 				WinSlideDownExp(Con,Delay,speed, __wwwwvar,dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )		}
@@ -470,7 +471,7 @@ showC:
 			
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
 			else
 				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
@@ -491,7 +492,7 @@ showC:
 		WinActivate,%con%
 		
 		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
-		_ty:=((BottomPlaced) ? ((CMD_Height<A_ScreenHeight) ? abs(A_ScreenHeight-CMD_Height) : 0) : ((Console_2_Mode) ? 0 : -2))
+		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height) : 0) : ((Console_2_Mode) ? 0 : -2))
 		WinMove,%con%,,_tx, ;_ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -500,7 +501,7 @@ showC:
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			;winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
 			else
 				WinSlideDownExp(Con,Delay,speed, __wwwwvar,dx)
 		}
@@ -515,7 +516,7 @@ showC:
 			
 			;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
 			else
 				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
 		}
