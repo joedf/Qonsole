@@ -82,7 +82,7 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.1"
+Version:="1.4.2"
 App_date:="2016/03/01"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
@@ -299,8 +299,8 @@ showC:
 				;doesnt work ;WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
 				Winset, AlwaysOnTop, On, %con%
 			cmd_height__:=(-xC_height)
-			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%xC_height%,%cmd_height%
-			WinMove,%con%,,,%cmd_height__%,%xC_height%,%cmd_height%
+			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%cmd_width%,%xC_height%
+			WinMove,%con%,,,%cmd_height__%,%cmd_width%,%xC_height%
 			WinGetPos,,,cw_w,ch,%con%
 			WinGet,hc,ID,%con%
 			con=ahk_id %hc%
