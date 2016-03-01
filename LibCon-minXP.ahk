@@ -116,7 +116,7 @@
 	NULL := ""
 	SizeConDebug := 0
 	SizeConErrorLevel := 0
-	SizeConDll := (A_Is64bitOS) ? "SizeCon_x64.dll" : "SizeCon.dll"
+	SizeConDll := (A_PtrSize==8) ? "SizeCon_x64.dll" : "SizeCon.dll"
 	
 	loadSizeCon() {
 		
