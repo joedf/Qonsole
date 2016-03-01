@@ -1,6 +1,6 @@
 1 VERSIONINFO
-FILEVERSION 1,4,0,0
-PRODUCTVERSION 1,4,0,0
+FILEVERSION 1,4,1,0
+PRODUCTVERSION 1,4,1,0
 FILEOS 0x4
 FILETYPE 0x1
 {
@@ -9,12 +9,12 @@ BLOCK "StringFileInfo"
 	BLOCK "040904B0"
 	{
 		VALUE "FileDescription", "Qonsole - Quake-like Console Emulator"
-		VALUE "FileVersion", "1.4.0"
+		VALUE "FileVersion", "1.4.1"
 		VALUE "InternalName", "Qonsole"
 		VALUE "LegalCopyright", "(C) 2016, joedf@ahkscript.org"
 		VALUE "OriginalFilename", "Qonsole.exe"
 		VALUE "ProductName", "Qonsole"
-		VALUE "ProductVersion", "1.4.0"
+		VALUE "ProductVersion", "1.4.1"
 	}
 }
 
