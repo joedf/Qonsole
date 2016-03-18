@@ -1,6 +1,7 @@
 # ![*](logo/Qonsole_48sm.png) Qonsole
   
 A Quake-like Console Emulator written in AutoHotkey. Configurable with [Cmd](https://en.wikipedia.org/wiki/Cmd.exe), [Console2](https://sourceforge.net/projects/console/) and [mintty](https://mintty.github.io/).  
+Sourceforge project page: https://sourceforge.net/p/qonsole-ahk  
 Released under the [MIT License](LICENSE.md).  
 
 [![Download for Microsoft Windows](logo/download_x86.png)](https://github.com/joedf/Qonsole/releases/latest)  
