@@ -6,6 +6,17 @@ Released under the [MIT License](LICENSE.md).
 
 [![Download for Microsoft Windows](logo/download_x86.png)](https://github.com/joedf/Qonsole/releases/latest)  
 
+###Features
+- Custom hotkey
+- Slide up & down animation
+- Enable Ctrl+v Console pasting
+- Transparency options
+- Configurable with cmd & console2
+- Background screen dimmer
+- Internal Update check, (automatic, 5 min after start up)
+- Optionally Run Qonsole when Windows Starts
+- More..
+
 ###Screenshots
 _Default view_  
 > ![screenshot1](screens/s1.png)
