@@ -25,6 +25,11 @@ _Settings panel_
 > ![screenshot2](screens/s2.png)
 
 ###User Reviews
+*_billman87_*  
+★★★★★ (5/5)  
+> Handy tool for anyone that uses the console daily.  
+_Posted 08/04/2016_
+  
 *_triarif_*  
 ★★★★★ (5/5)  
 > so far so good, i just want the icon clicked once not double-clicked to bring the console  
