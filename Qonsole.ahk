@@ -89,8 +89,8 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.3"
-App_date:="2017/01/21"
+Version:="1.4.4"
+App_date:="2017/01/22"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
@@ -1201,6 +1201,7 @@ WindowDesign(WindowHWND) {
 	getFontSize(fw,fh)
 	getConsoleSize(cw,ch)
 	WinGetPos,,,,winFH,ahk_id %windowHWND%
+	global CMD_Height
 	SysGet,tbarH,4
 	sysget,winBH,31
 	dlines:=ceil(((winFH-tbarH)-winBH)/fh)
@@ -1233,6 +1234,9 @@ WindowDesign(WindowHWND) {
 			global WinTenPlus
 			RectX += WinTenPlus
 			RectY += WinTenPlus
+			if ((winFH-RectY)<39) or ((CMD_Height-RectY)<16){
+				RectY += (fh*3)
+			}
 			WinSet, Region, 0-0 w%RectX% h%RectY%, ahk_id %WindowHWND%
 		}
 	}
@@ -1372,5 +1376,6 @@ SetEditPlaceholder(control, string, showalways = 0){
 }
 
 Console_ScrollBottom(chwnd){
-	ControlSend,,{End},ahk_id %chwnd% 
+	;Click WheelDown
+	ControlSend,,{End}, %chwnd% 
 }
