@@ -4,7 +4,14 @@
 	if A_OSVersion in WIN_2003,WIN_XP,WIN_2000,WIN_NT4,WIN_95,WIN_98,WIN_ME  ; Note: No spaces around commas.
 		XPMode:=1
 	else
+	{
 		XPMode:=0
+		;////// Windows 10+ patch ///////
+		if A_OSVersion in WIN_7,WIN_8,WIN_8.1,WIN_VISTA
+			WinTenPlus := 0
+		else
+			WinTenPlus := 2
+	}
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	
 	#Include LibCon-minXP.ahk
@@ -82,8 +89,8 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.2"
-App_date:="2016/03/01"
+Version:="1.4.3"
+App_date:="2017/01/21"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
@@ -244,6 +251,12 @@ return
 		gosub HideC
 return
 */
+
+#IfWinActive, ahk_group Console_Classes
+~Enter::
+	Console_ScrollBottom(con)
+return
+#IfWinActive
 
 showC:
 	if (!WinExist(con)) {
@@ -446,7 +459,7 @@ showC:
 		WinActivate,%con%
 		
 		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
-		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height) : 0) : ((Console_2_Mode) ? 0 : -2))
+		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height+( (WinTenPlus!=0) ? 16 : 0 )) : 0) : ((Console_2_Mode) ? 0 : -2))
 		WinMove,%con%,,_tx, _ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -471,9 +484,9 @@ showC:
 			
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
+				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) ),dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -492,7 +505,7 @@ showC:
 		WinActivate,%con%
 		
 		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
-		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height) : 0) : ((Console_2_Mode) ? 0 : -2))
+		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height+( (WinTenPlus!=0) ? 16 : 0 )) : 0) : ((Console_2_Mode) ? 0 : -2))
 		WinMove,%con%,,_tx, ;_ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -516,9 +529,11 @@ showC:
 			
 			;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
+			{
+				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
+			}
 			else
-				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : -2),dx)
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) ),dx)
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
 	}
@@ -1211,7 +1226,15 @@ WindowDesign(WindowHWND) {
 	}
 	else
 	{
-		WinSet, Region, %x%-%y% w%RectX% h%RectY%, ahk_id %WindowHWND%
+		if A_OSVersion in WIN_7,WIN_8,WIN_8.1,WIN_VISTA
+			WinSet, Region, %x%-%y% w%RectX% h%RectY%, ahk_id %WindowHWND%
+		else
+		{	; Windows 10+
+			global WinTenPlus
+			RectX += WinTenPlus
+			RectY += WinTenPlus
+			WinSet, Region, 0-0 w%RectX% h%RectY%, ahk_id %WindowHWND%
+		}
 	}
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	
@@ -1346,4 +1369,8 @@ SetEditPlaceholder(control, string, showalways = 0){
         wstring := string
     DllCall("SendMessageW", "UInt", control, "UInt", 0x1501, "UInt", showalways, "UInt", &wstring)
     return
+}
+
+Console_ScrollBottom(chwnd){
+	ControlSend,,{End},ahk_id %chwnd% 
 }
