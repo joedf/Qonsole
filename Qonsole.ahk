@@ -76,6 +76,7 @@
 	IniRead,CMD_Width,%configfile%,Settings,CMD_Width, % (Default_CMD_Width*8)
 	IniRead,CMD_Height,%configfile%,Settings,CMD_Height,266
 	IniRead,CMD_StartUpArgs,%configfile%,Settings,CMD_StartUpArgs,%A_space%
+	IniRead,CMD_offset,%configfile%,Settings,CMD_offset,0
 	IniRead,GuiBGDarken_Increment,%configfile%,Animation,GuiBGDarken_Increment,6
 	
 	;///////////////////////// [ XP Patch ] /////////////////////////
@@ -90,7 +91,7 @@
 ;####################################################
 AppName:="Qonsole"
 Version:="1.4.4"
-App_date:="2017/01/22"
+App_date:="2017/02/16"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
@@ -472,9 +473,9 @@ showC:
 			__wwwwvar:=(Console_2_Mode) ? 0 : -2
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height-CMD_offset,dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, __wwwwvar,dx)
+				WinSlideDownExp(Con,Delay,speed, __wwwwvar+CMD_offset,dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )		}
 		}
 		else
@@ -484,9 +485,9 @@ showC:
 			
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
+				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height-CMD_offset)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) ),dx)
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+CMD_offset,dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -514,9 +515,9 @@ showC:
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			;winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height-CMD_offset,dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, __wwwwvar,dx)
+				WinSlideDownExp(Con,Delay,speed, __wwwwvar+CMD_offset,dx)
 		}
 		else
 		{
@@ -530,10 +531,10 @@ showC:
 			;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
 			if (BottomPlaced)
 			{
-				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
+				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height-CMD_offset)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
 			}
 			else
-				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) ),dx)
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+CMD_offset,dx)
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
 	}
@@ -795,7 +796,11 @@ prog_settings:
 		Gui, Add, Text, x16 yp+26, Start Up Arguments
 		Gui, Add, Edit, x+4 yp-2 h20 w214 vCMD_StartUpArgs hwndhEditCMD_StartUpArgs,%CMD_StartUpArgs%
 		
-		Gui, Add, GroupBox, x4 y4 w330 h154 , Console Settings
+		Gui, Add, Text, x16 yp+26, Vertical offset/margin (px)
+		Gui, Add, Edit, x+4 yp-3 w55 h20
+		Gui, Add, UpDown, vUCMD_offset Range-100-100, %CMD_offset%
+		
+		Gui, Add, GroupBox, x4 y4 w330 h175 , Console Settings
 		
 		;------------ Animation Settings -------------------
 		
@@ -940,6 +945,7 @@ GuiSave:
 	IniWrite,%UCMD_Width%,%configFile%,Settings,CMD_Width
 	IniWrite,%UCMD_Height%,%configFile%,Settings,CMD_Height
 	IniWrite,%CMD_StartUpArgs%,%configFile%,Settings,CMD_StartUpArgs
+	IniWrite,%UCMD_offset%,%configFile%,Settings,CMD_offset
 	IniWrite,%UGuiBGDarken_Increment%,%configFile%,Animation,GuiBGDarken_Increment
 	UGuiBGDarken_Max:=abs(255-Round((UGuiBGDarken_Max/100)*255))
 	IniWrite,%UGuiBGDarken_Max%,%configFile%,Animation,GuiBGDarken_Max
