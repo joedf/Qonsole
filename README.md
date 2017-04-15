@@ -6,7 +6,7 @@ Released under the [MIT License](LICENSE.md).
 
 [![Download for Microsoft Windows](logo/download_x86.png)](https://github.com/joedf/Qonsole/releases/latest)  
 
-###Features
+### Features
 - Custom hotkey
 - Slide up & down animation
 - Enable Ctrl+v Console pasting
@@ -17,14 +17,14 @@ Released under the [MIT License](LICENSE.md).
 - Optionally Run Qonsole when Windows Starts
 - More..
 
-###Screenshots
+### Screenshots
 _Default view_  
 > ![screenshot1](screens/s1.png)
   
 _Settings panel_  
 > ![screenshot2](screens/s2.png)
 
-###User Reviews
+### User Reviews
 *_billman87_*  
 ★★★★★ (5/5)  
 > Handy tool for anyone that uses the console daily.  
