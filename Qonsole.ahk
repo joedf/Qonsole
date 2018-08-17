@@ -73,6 +73,7 @@
 	IniRead,Mintty_path,%configfile%,Settings,Mintty_path,%A_scriptDir%\mintty.exe
 	IniRead,OpenHotkey,%configfile%,Settings,OpenHotkey,#c
 		Hotkey,%OpenHotkey%,OpenHotkey,On
+	
 	IniRead,CMD_Width,%configfile%,Settings,CMD_Width, % (Default_CMD_Width*8)
 	IniRead,CMD_Height,%configfile%,Settings,CMD_Height,266
 	IniRead,CMD_StartUpArgs,%configfile%,Settings,CMD_StartUpArgs,%A_space%
@@ -90,14 +91,25 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.4"
-App_date:="2017/02/16"
+Version:="1.4.5"
+App_date:="2018/03/27"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
 MsgBox_AlwaysOnTop:=262144
 Console_2_Mode:=InStr(Console_Mode,"Console2")
 Console_Mode:=SubStr(Console_Mode,1,8)
+
+
+; //////////////////////////////////////////////////////////////////////
+;    Adding in support for High-DPI (e.g. 192) and multiple monitors (?)
+; //////////////////////////////////////////////////////////////////////
+ScreenScaleFactor:= 1 ;(A_ScreenDPI/96) ;--not supported yet
+CMD_Width *= ScreenScaleFactor
+CMD_Height *= ScreenScaleFactor
+Speed *= ScreenScaleFactor
+; //////////////////////////////////////////////////////////////////////
+
 
 if (GuiBGDarken_Max) ;if not equal zero, then create it
 	gosub Create_GuiBGDarken
@@ -461,6 +473,7 @@ showC:
 		
 		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
 		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height+( (WinTenPlus!=0) ? 16 : 0 )) : 0) : ((Console_2_Mode) ? 0 : -2))
+		
 		WinMove,%con%,,_tx, _ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -473,9 +486,9 @@ showC:
 			__wwwwvar:=(Console_2_Mode) ? 0 : -2
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height-CMD_offset,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-((xC_height-CMD_offset)*ScreenScaleFactor),dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, __wwwwvar+CMD_offset,dx)
+				WinSlideDownExp(Con,Delay,speed, (__wwwwvar+CMD_offset)*ScreenScaleFactor,dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )		}
 		}
 		else
@@ -485,9 +498,9 @@ showC:
 			
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height-CMD_offset)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
+				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-((xC_height-CMD_offset)*ScreenScaleFactor))+( (WinTenPlus!=0) ? 16 : 0 ),dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+CMD_offset,dx)
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+((CMD_offset)*ScreenScaleFactor),dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -515,9 +528,9 @@ showC:
 			__wwwwvar:=(__wwwwvar)-(__wwzh)
 			;winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-xC_height-CMD_offset,dx)
+				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-((xC_height-CMD_offset)*ScreenScaleFactor),dx)
 			else
-				WinSlideDownExp(Con,Delay,speed, __wwwwvar+CMD_offset,dx)
+				WinSlideDownExp(Con,Delay,speed, (__wwwwvar+CMD_offset)*ScreenScaleFactor,dx)
 		}
 		else
 		{
@@ -531,10 +544,10 @@ showC:
 			;when qonsole is at the bottom, the action to hide it is the same as to show it when we're at the top, which is to slide it upward
 			if (BottomPlaced)
 			{
-				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-xC_height-CMD_offset)+( (WinTenPlus!=0) ? 16 : 0 ),dx)
+				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-((xC_height-CMD_offset)*ScreenScaleFactor))+( (WinTenPlus!=0) ? 16 : 0 ),dx)
 			}
 			else
-				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+CMD_offset,dx)
+				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+((CMD_offset)*ScreenScaleFactor),dx)
 		}
 		;///////////////////////// [ XP Patch ] /////////////////////////
 	}
@@ -568,7 +581,7 @@ HideC:
 		if (BottomPlaced)
 			WinSlideDownExp(Con,Delay,speed,A_ScreenHeight,dx)
 		else
-			WinSlideUpExp(Con,Delay,speed,offset,dx)
+			WinSlideUpExp(Con,Delay,speed,offset*ScreenScaleFactor,dx)
 		;WinSlideUp(Con,speed,Delay,offset)
 		WinHide,%con%
 		
@@ -612,7 +625,22 @@ if (!XPMode) {
 	Gui GuiBGDarken: Color, %GuiBGDarken_Color%
 	Gui GuiBGDarken: +E0x20 -Caption +LastFound +ToolWindow +AlwaysOnTop +hwndhGuiBGDarken
 	WinSet, Transparent, 0
-	Gui GuiBGDarken:Show, x0 y0 w%A_screenwidth% h%A_screenHeight%,Qonsole_GuiBGDarken
+	
+	SysGet, VirtualLeft, 76
+	SysGet, VirtualTop, 77
+	SysGet, VirtualWidth, 78
+	SysGet, VirtualHeight, 79
+	
+	_ta:=GetMonitorCoords()
+	
+	_tMAXx := VirtualLeft ; 0
+	_tMAXy := VirtualTop ; 0
+	_tMAXw := VirtualWidth ; A_screenwidth
+	_tMAXh := VirtualHeight ; A_screenHeight
+	
+	MsgBox x:%VirtualLeft% y:%VirtualTop% w:%VirtualWidth% h:%VirtualHeight%
+	
+	Gui GuiBGDarken:Show, x%_tMAXx% y%_tMAXy% w%_tMAXw% h%_tMAXh%,Qonsole_GuiBGDarken
 }
 ;///////////////////////// [ XP Patch ] /////////////////////////
 return
@@ -1208,6 +1236,7 @@ WindowDesign(WindowHWND) {
 	getConsoleSize(cw,ch)
 	WinGetPos,,,,winFH,ahk_id %windowHWND%
 	global CMD_Height
+	global ScreenScaleFactor
 	SysGet,tbarH,4
 	sysget,winBH,31
 	dlines:=ceil(((winFH-tbarH)-winBH)/fh)
@@ -1216,10 +1245,17 @@ WindowDesign(WindowHWND) {
 	RectX:=fw*cw + 2 - x
 	RectY:=fh*dlines + 2 - y
 	
+	RectX *= ScreenScaleFactor
+	RectY *= ScreenScaleFactor
+	
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	global XPMode
 	if (XPMode) {
 		wingetpos,xxx,yyy,w_width,w_height, ahk_id %WindowHWND%
+		
+		w_width *= ScreenScaleFactor
+		w_height *= ScreenScaleFactor
+		
 		winmove,ahk_id %WindowHWND%,,2,2
 		;msgbox %x%-%y% w%RectX% h%RectY% : %w_width% %w_height%
 		wwx:=6 ;fw-2 ;6
@@ -1272,7 +1308,10 @@ WinSlideDownExp(Wintitle,Delay,spd,fy,dx) {
 		if (anim==1)
 			return
 		WinGetPos,,y,,,%wintitle%
-		b:=y+(spd*(-(1-exp((abs(dx)-A_Index)/tau))+1))+1
+		inc := (spd*(-(1-exp((abs(dx)-A_Index)/tau))+1))+1
+		if (abs(inc) < 1)
+			inc := 1
+		b:=y + inc
 		if (b > fy)
 			WinMove,%Wintitle%,,, % (abs(y-fy)+y)
 		else
@@ -1307,7 +1346,10 @@ WinSlideUpExp(Wintitle,Delay,spd,fy,dx) {
 		if !WinExist(wintitle)
 			return
 		WinGetPos,,y,,,%wintitle%
-		b:=y-(spd*(-(1-exp((abs(dx)-A_Index)/tau))+1))-1
+		inc := (spd*(-(1-exp((abs(dx)-A_Index)/tau))+1))-1
+		if (abs(inc) < 1)
+			inc := 1
+		b:=y - inc
 		if (b<=fy) {
 			WinMove,%Wintitle%,,,%fy%
 			break
@@ -1384,4 +1426,26 @@ SetEditPlaceholder(control, string, showalways = 0){
 Console_ScrollBottom(chwnd){
 	;Click WheelDown
 	ControlSend,,{End}, %chwnd% 
+}
+
+GetMonitorCoords(winHandle="") { ; modified from https://autohotkey.com/boards/viewtopic.php?p=78862#p78862
+	if (!winHandle)
+		winHandle := WinExist("A") ; The window to operate on
+	; Don't worry about how this part works. Just trust that it gets the 
+	; bounding coordinates of the monitor the window is on.
+	;--------------------------------------------------------------------------
+	VarSetCapacity(monitorInfo, 40), NumPut(40, monitorInfo)
+	monitorHandle := DllCall("MonitorFromWindow", "Ptr", winHandle, "UInt", 0x2)
+	DllCall("GetMonitorInfo", "Ptr", monitorHandle, "Ptr", &monitorInfo)
+	;--------------------------------------------------------------------------
+
+	workLeft      := NumGet(monitorInfo, 20, "Int") ; Left
+	workTop       := NumGet(monitorInfo, 24, "Int") ; Top
+	workRight     := NumGet(monitorInfo, 28, "Int") ; Right
+	workBottom    := NumGet(monitorInfo, 32, "Int") ; Bottom
+
+	;WinGetPos,,, W, H, A
+	;WinMove, A,, workLeft + (workRight - workLeft) // 2 - W // 2
+	;	, workTop + (workBottom - workTop) // 2 - H // 2
+	return [workLeft,workTop,workRight,workBottom]
 }
