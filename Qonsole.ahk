@@ -638,7 +638,7 @@ if (!XPMode) {
 	_tMAXw := VirtualWidth ; A_screenwidth
 	_tMAXh := VirtualHeight ; A_screenHeight
 	
-	MsgBox x:%VirtualLeft% y:%VirtualTop% w:%VirtualWidth% h:%VirtualHeight%
+	;MsgBox x:%VirtualLeft% y:%VirtualTop% w:%VirtualWidth% h:%VirtualHeight%
 	
 	Gui GuiBGDarken:Show, x%_tMAXx% y%_tMAXy% w%_tMAXw% h%_tMAXh%,Qonsole_GuiBGDarken
 }
