@@ -91,7 +91,7 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.5"
+Version:="1.4.5b"
 App_date:="2018/03/27"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
@@ -246,14 +246,14 @@ OpenHotkey:
 return
 
 PasteHotkey:
-if (Console_2_Mode) {
-	KeyWait, Ctrl, Up
-	MouseClick, M ;default config
-}
-IfWinActive, ahk_class ConsoleWindowClass
-{
-	SendInput {Raw}%clipboard% ; ConsolePaste
-}
+	if (Console_2_Mode) {
+		KeyWait, Ctrl, Up
+		MouseClick, M ;default config
+	}
+	IfWinActive, ahk_class ConsoleWindowClass
+	{
+		SendInput {Raw}%clipboard% ; ConsolePaste
+	}
 return
 
 /*
@@ -267,7 +267,10 @@ return
 
 #IfWinActive, ahk_group Console_Classes
 ~Enter::
-	Console_ScrollBottom(con)
+	if InStr(WinActive(),"@")
+		return
+	if WinActive(con)
+		Console_ScrollBottom(con)
 return
 #IfWinActive
 
