@@ -91,7 +91,7 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.5b"
+Version:="1.4.5c"
 App_date:="2018/03/27"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
@@ -430,7 +430,7 @@ showC:
 			}
 			run,"%CMD_Path%" %CMD_StartUpArgs%,,,cPID
 			conP=ahk_pid %cPID%
-			WinWait,%conP%,,1
+			WinWait,%conP%,,3
 			conP:=""
 			if (ErrorLevel) or (cPID="")
 			WinGet,cPID,PID,%con%
