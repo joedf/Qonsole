@@ -446,6 +446,8 @@ showC:
 			hs:=getStdoutHandle()
 			cmd_int_fwidth:=getFontWidth()
 			
+			winW:=CMD_Width+50
+			
 			if (WinTenPlus) {
 				GetConsoleSize(cmd_w_int,t_console_height)
 				setconsoleSize(cmd_w_int,t_console_height)
@@ -456,8 +458,6 @@ showC:
 				setconsoleSize(cmd_w_int,t_console_height)
 				cmd_w_fix:=(cmd_w_int*cmd_int_fwidth)
 			}
-			
-			winW:=CMD_Width+50
 			
 			SysGet,tbarH__,4
 			WinMove,%con%,,,,%winW%,(xC_height+tbarH__)
