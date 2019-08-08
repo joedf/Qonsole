@@ -91,8 +91,8 @@
 
 ;####################################################
 AppName:="Qonsole"
-Version:="1.4.5c"
-App_date:="2018/03/27"
+Version:="1.4.6"
+App_date:="2019/08/08"
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
 
