@@ -445,13 +445,26 @@ showC:
 			AttachConsole(cPID)
 			hs:=getStdoutHandle()
 			cmd_int_fwidth:=getFontWidth()
-			setconsoleSize(cmd_w_int:=(CMD_Width//cmd_int_fwidth),getConsoleHeight())
-			cmd_w_fix:=(cmd_w_int*cmd_int_fwidth)
+			
+			if (WinTenPlus) {
+				GetConsoleSize(cmd_w_int,t_console_height)
+				setconsoleSize(cmd_w_int,t_console_height)
+				cmd_w_fix := winW
+			} else {
+				cmd_w_int:=(CMD_Width//cmd_int_fwidth)
+				t_console_height:=getConsoleHeight()
+				setconsoleSize(cmd_w_int,t_console_height)
+				cmd_w_fix:=(cmd_w_int*cmd_int_fwidth)
+			}
+			
 			winW:=CMD_Width+50
+			
 			SysGet,tbarH__,4
 			WinMove,%con%,,,,%winW%,(xC_height+tbarH__)
+
 			WindowDesign(hc)
 			
+			;debugMsgBox(cmd_w_int,t_console_height,tbarH__,xC_height,winW,"_______",cmd_a_w,cmd_a_h)
 			
 			;///////////////////////// [ XP Patch ] /////////////////////////
 			if (XPMode) {
@@ -477,6 +490,9 @@ showC:
 		_tx:=((HorizontallyCentered) ? ((cmd_w_fix<A_ScreenWidth) ? abs((A_ScreenWidth-cmd_w_fix)/2) : 0) : 0) +((Console_2_Mode) ? 0 : -2)
 		_ty:=((BottomPlaced) ? ((xC_height<A_ScreenHeight) ? abs(A_ScreenHeight-xC_height+( (WinTenPlus!=0) ? 16 : 0 )) : 0) : ((Console_2_Mode) ? 0 : -2))
 		
+		if (WinTenPlus && InStr(Console_Mode,"Cmd"))
+			_tx += 2
+		
 		WinMove,%con%,,_tx, _ty
 		
 		;///////////////////////// [ XP Patch ] /////////////////////////
@@ -500,9 +516,10 @@ showC:
 				WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
 			
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
-			if (BottomPlaced)
-				WinSlideUpExp(Con,Delay,speed,(A_ScreenHeight-((xC_height-CMD_offset)*ScreenScaleFactor))+( (WinTenPlus!=0) ? 16 : 0 ),dx)
-			else
+			if (BottomPlaced) {
+				wmove_y := (A_ScreenHeight-((xC_height-CMD_offset)*ScreenScaleFactor))+( (WinTenPlus!=0) ? 24 : 0 )
+				WinSlideUpExp(Con,Delay,speed,wmove_y,dx)
+			} else
 				WinSlideDownExp(Con,Delay,speed, (0+(Console_2_Mode) ? 0 : (-2+WinTenPlus) )+((CMD_offset)*ScreenScaleFactor),dx)
 			;WinSlideDown(Con,speed,Delay,(0+(Console_2_Mode) ? 0 : -2) )
 		}
@@ -1227,6 +1244,7 @@ WindowDesign(WindowHWND) {
 	SetWinDelay, -1
 	global TransparencyPercent
 	global Console_2_Mode
+	global Console_Mode
 	WinSet, Transparent, % currentTrans:=(abs(100-TransparencyPercent)/100)*255 , ahk_id %WindowHWND%
 	Winset, AlwaysOnTop, On, ahk_id %WindowHWND%
 	
@@ -1279,8 +1297,12 @@ WindowDesign(WindowHWND) {
 			global WinTenPlus
 			RectX += WinTenPlus
 			RectY += WinTenPlus
-			if ((winFH-RectY)<39) or ((CMD_Height-RectY)<16){
-				RectY += (fh*3)
+			if (WinTenPlus && InStr(Console_Mode,"Cmd")) {
+				RectY -= fh
+			} else {
+				if ((winFH-RectY)<39) or ((CMD_Height-RectY)<16){
+					RectY += (fh*3)
+				}
 			}
 			WinSet, Region, 0-0 w%RectX% h%RectY%, ahk_id %WindowHWND%
 		}
@@ -1451,4 +1473,10 @@ GetMonitorCoords(winHandle="") { ; modified from https://autohotkey.com/boards/v
 	;WinMove, A,, workLeft + (workRight - workLeft) // 2 - W // 2
 	;	, workTop + (workBottom - workTop) // 2 - H // 2
 	return [workLeft,workTop,workRight,workBottom]
+}
+
+debugMsgBox(params*) {
+	for index,param in params
+        str .= param . "`n"
+    MsgBox % str
 }
