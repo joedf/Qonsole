@@ -361,7 +361,10 @@ showC:
 			run,"%mintty_path%" %CMD_StartUpArgs%,,,cPID
 			WinWait,%con%
 			DetectHiddenWindows,Off
-			WinWaitActive,ahk_pid %cPID%
+			if (XPMode)		;note(vladimir.kirichenkov): I think this wait is useless as we can't guarantee it at all.
+			{
+				WinWaitActive,ahk_pid %cPID%
+			}
 			WinWaitActive,%con%
 			DetectHiddenWindows,On
 				Winset, AlwaysOnTop, On, %con%
