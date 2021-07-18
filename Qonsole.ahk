@@ -1,4 +1,22 @@
 ﻿; Supported On AutoHotkey Version: 1.1.13.01+
+
+;ahk2exe compiler directive only support by v1.1.33+
+;but non-breaking for older versions, so used here
+
+AppName:="Qonsole"
+Version:="1.4.7"
+;@Ahk2Exe-SetVersion 1.4.7.0
+;@Ahk2Exe-SetProductVersion 1.4.7.0
+App_date:="2021/07/18"
+;@Ahk2Exe-SetCopyright (C) 2021`, joedf@ahkscript.org
+Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
+Project_URL:="http://qonsole-ahk.sourceforge.net"
+;@Ahk2Exe-SetMainIcon logo\Qonsole_sm.ico
+;@Ahk2Exe-SetDescription Qonsole - Quake-like Console Emulator
+;@Ahk2Exe-SetOrigFilename Qonsole.exe
+;@Ahk2Exe-SetProductName Qonsole
+;@Ahk2Exe-SetInternalName Qonsole
+
 	
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	if A_OSVersion in WIN_2003,WIN_XP,WIN_2000,WIN_NT4,WIN_95,WIN_98,WIN_ME  ; Note: No spaces around commas.
@@ -90,11 +108,6 @@
 	IniRead,GuiBGDarken_Color,%configfile%,Animation,GuiBGDarken_Color,0x1A1A1A
 
 ;####################################################
-AppName:="Qonsole"
-Version:="1.4.6"
-App_date:="2019/08/08"
-Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
-Project_URL:="http://qonsole-ahk.sourceforge.net"
 
 MsgBox_AlwaysOnTop:=262144
 Console_2_Mode:=InStr(Console_Mode,"Console2")
