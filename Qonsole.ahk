@@ -11,7 +11,7 @@ App_date:="2021/07/18"
 ;@Ahk2Exe-SetCopyright (C) 2021`, joedf@ahkscript.org
 Update_URL:="http://qonsole-ahk.sourceforge.net/update.ini"
 Project_URL:="http://qonsole-ahk.sourceforge.net"
-;@Ahk2Exe-SetMainIcon logo\Qonsole_sm.ico
+;@Ahk2Exe-SetMainIcon logo\Qonsole_sm2.ico
 ;@Ahk2Exe-SetDescription Qonsole - Quake-like Console Emulator
 ;@Ahk2Exe-SetOrigFilename Qonsole.exe
 ;@Ahk2Exe-SetProductName Qonsole
@@ -1054,7 +1054,7 @@ if (!About_prog)
 	if (A_IsCompiled)
 		Gui, About_prog:Add, Picture, x2 y2 w48 h48 Icon1, %A_ScriptFullPath%
 	else
-		Gui, About_prog:Add, Picture, x2 y2 w48 h48 Icon1, %A_scriptDir%\logo\Qonsole_sm.ico
+		Gui, About_prog:Add, Picture, x2 y2 w48 h48 Icon1, %A_scriptDir%\logo\Qonsole_sm2.ico
 	Gui, About_prog:font, s16 c00FF00, Sans Serif
 	Gui, About_prog:font, s16 c00FF00, Segoe UI Light
 	Gui, About_prog:Add, Text, x+2 yp+4, Qonsole
