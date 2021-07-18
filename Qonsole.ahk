@@ -104,7 +104,7 @@ Console_Mode:=SubStr(Console_Mode,1,8)
 ; //////////////////////////////////////////////////////////////////////
 ;    Adding in support for High-DPI (e.g. 192) and multiple monitors (?)
 ; //////////////////////////////////////////////////////////////////////
-ScreenScaleFactor:= 1 ;(A_ScreenDPI/96) ;--not supported yet
+ScreenScaleFactor:= 1 ;(A_ScreenDPI/96) ;--not fully supported yet (?)
 CMD_Width *= ScreenScaleFactor
 CMD_Height *= ScreenScaleFactor
 Speed *= ScreenScaleFactor
@@ -815,14 +815,14 @@ prog_settings:
 		
 		Gui, Add, Text, x16 yp+4 w80 h20 , Transparency `%
 		
-		Gui, Add, Text, x172 y24 w70 h16 , Console2 Path
+		Gui, Add, Text, x170 y24 w75 h16 , Console2 Path
 		Gui, Add, Text, xp+20 y+4 w50 h16 , Cmd Path
 		Gui, Add, Text, xp-6 y+4 h16 , Mintty Path
 		Gui, Add, Button, xp+60 y20 w80 h20 gButtonConsole2, Browse...
 		Gui, Add, Button, xp y+0 wp hp gButtonCMD, Browse...
 		Gui, Add, Button, xp y+0 wp hp gButtonMintty, Browse...
 		
-		Gui, Add, Text, x172 y86 w70 h16 , Console Mode
+		Gui, Add, Text, x172 y83 w70 h16 , Console Mode
 		Gui, Add, DropDownList, xp+74 y82 w80 h20 +r3 vDDmode, Cmd|Console2|Mintty
 
 		UCMD_Width_max:=(A_ScreenWidth+8)
@@ -904,9 +904,9 @@ prog_settings:
 		*/
 		
 		if(AnimationDisabled)
-			Gui, Add, CheckBox, x+4 yp checked vAnimationDisabled, Disable Animation
+			Gui, Add, CheckBox, x+8 yp checked vAnimationDisabled, Disable Animation
 		else
-			Gui, Add, CheckBox, x+4 yp vAnimationDisabled, Disable Animation
+			Gui, Add, CheckBox, x+8 yp vAnimationDisabled, Disable Animation
 			
 		if(CmdPaste)
 			Gui, Add, CheckBox, x16 y+4 checked vCmdPaste, Enable Console Ctrl+V Pasting
@@ -924,9 +924,9 @@ prog_settings:
 			Gui, Add, CheckBox, x16 y+4 vReduceMemory, Reduce Memory Usage
 		
 		;if(AutoWinActivate)
-		;	Gui, Add, CheckBox, x+60 yp Disabled checked vAutoWinActivate, Auto WinActivate
+		;	Gui, Add, CheckBox, x+64 yp Disabled checked vAutoWinActivate, Auto WinActivate
 		;else
-			Gui, Add, CheckBox, x+60 yp Disabled vAutoWinActivate, Auto WinActivate
+			Gui, Add, CheckBox, x+64 yp Disabled vAutoWinActivate, Auto WinActivate
 		
 		;----------------- Save and Cancel + Show ------------------------------
 		
@@ -1260,7 +1260,6 @@ WindowDesign(WindowHWND) {
 	getConsoleSize(cw,ch)
 	WinGetPos,,,,winFH,ahk_id %windowHWND%
 	global CMD_Height
-	global ScreenScaleFactor
 	SysGet,tbarH,4
 	sysget,winBH,31
 	dlines:=ceil(((winFH-tbarH)-winBH)/fh)
@@ -1269,16 +1268,20 @@ WindowDesign(WindowHWND) {
 	RectX:=fw*cw + 2 - x
 	RectY:=fh*dlines + 2 - y
 	
-	RectX *= ScreenScaleFactor
-	RectY *= ScreenScaleFactor
+	; global ScreenScaleFactor
+	; Turn's out, it was just WinSetRegion that needed DPI scaling
+	_ScreenScaleFactor := (A_ScreenDPI/96)
+	
+	RectX *= _ScreenScaleFactor
+	RectY *= _ScreenScaleFactor
 	
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	global XPMode
 	if (XPMode) {
 		wingetpos,xxx,yyy,w_width,w_height, ahk_id %WindowHWND%
 		
-		w_width *= ScreenScaleFactor
-		w_height *= ScreenScaleFactor
+		w_width *= _ScreenScaleFactor
+		w_height *= _ScreenScaleFactor
 		
 		winmove,ahk_id %WindowHWND%,,2,2
 		;msgbox %x%-%y% w%RectX% h%RectY% : %w_width% %w_height%
